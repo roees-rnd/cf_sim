@@ -101,7 +101,9 @@ fi
 
 # docker exec -i $CNTNAME /bin/bash -c "cd $CATKIN_PATH;source /opt/ros/kinetic/setup.bash;catkin build"
 docker exec -i $CNTNAME /bin/bash -c "cd $CATKIN_PATH;source devel/setup.bash;catkin build"
+docker exec -i $CNTNAME /bin/bash -c "cd $CATKIN_PATH/src/sim_cf_firmware/sitl_make/;mkdir build;cd build;cmake ..;make"
 
+docker exec -i $CNTNAME /bin/bash -c "echo \"alias vsc='code --user-data-dir /home/cf_user/tmp'\" >> /root/.bashrc"
 
 tmux send-keys "docker exec -it $CNTNAME /bin/bash" C-m
 
