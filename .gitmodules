@@ -1,3 +1,6 @@
 [submodule "sim_cf_gazebo"]
 	path = sim_cf_gazebo
 	url = https://github.com/roees-rnd/sim_cf_gazebo.git
+[submodule "sim_cf_firmware"]
+	path = sim_cf_firmware
+	url = https://github.com/roees-rnd/sim_cf_firmware.git
