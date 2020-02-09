@@ -55,7 +55,7 @@ SHARE_VOL="$SHARE_VOL --volume=\"$SELF_DIR/sim_cf_firmware:$CATKIN_PATH/src/sim_
 
 if [[ $REPLY =~ ^[Yy]$ ]];then
     echo "running vnc.."
-	tmux send-keys "docker run -i --env=\"DISPLAY=$DISPLAY\" $SHARE_VOL --env=\"QT_X11_NO_MITSHM=1\" --volume=\"/tmp/.X11-unix:/tmp/.X11-unix:rw\" --env=\"XAUTHORITY=$XAUTH\" --volume=\"$XAUTH:$XAUTH\" --entrypoint \"/startup.sh\" $imgTag" C-m
+	tmux send-keys "docker run -i --env=\"DISPLAY=$DISPLAY\" $SHARE_VOL --env=\"QT_X11_NO_MITSHM=1\" --volume=\"/tmp/.X11-unix:/tmp/.X11-unix:rw\" --env=\"XAUTHORITY=$XAUTH\" --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --volume=\"$XAUTH:$XAUTH\" --entrypoint \"/startup.sh\" $imgTag" C-m
 else
 	echo "not running vnc.. (in order to run execute /startup.sh inside the container)"
 	tmux send-keys "docker run -i --entrypoint \"/startup.sh\" $imgTag" C-m
