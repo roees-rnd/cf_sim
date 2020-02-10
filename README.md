@@ -9,7 +9,12 @@ git clone --recurse-submodules https://github.com/roees-rnd/cf_sim.git
 ```
 docker pull roees/ros-cf-vnc:vscode-config
 ```
+## Dependencies:
+
+1. tmux
+
 ## running the docker:
+
 ```
 ./dockerRun
 ```
