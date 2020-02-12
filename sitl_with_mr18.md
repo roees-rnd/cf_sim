@@ -34,6 +34,10 @@ in catkin:
 
 The `sim_cf` enables crazyflie firmware SITL test with gazebo simulation. It contains a **gazebo model** of the crazyflie, a **cfHandler plugin** and a version of **crazyflie-firmware** which modified for SITL. In the modified FW version, hardware interfaces are modified to gazebo ones (imu, barometer, magnetometer and lps) or disabled (e.g. on board leds).
 
+
+
+![](pics/sim_cf_mr18_integration.png)
+
 ##### The gazebo cfHandler plugin:
 
 The plugin takes care of the following:
@@ -42,7 +46,7 @@ The plugin takes care of the following:
 2. Data flow from cf firmware process to the gazebo simulation (e.g. engine commands). 
 3. Maybe more ...
 
-##### Elaboration on #1:
+##### Elaboration on #1 (gazebo --> firmware):
 
 **From gazebo to cfHandler:**
 
