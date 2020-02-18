@@ -45,32 +45,30 @@ then
     chmod a+r $XAUTH
 fi
 
-echo
-read -p "Run vnc (browser desktop) (y/n)?  " -n 1 -r
-echo
-
 NUM_CNTR=`docker ps -a | wc -l`
-SHARE_VOL="-v $SELF_DIR/sim_cf_gazebo:$CATKIN_PATH/src/sim_cf_gazebo"
-SHARE_VOL="$SHARE_VOL -v $SELF_DIR/sim_cf_firmware:$CATKIN_PATH/src/sim_cf_firmware"
 
-DISPLAY_SHR="--volume=\"/etc/group:/etc/group:ro\""
-DISPLAY_SHR="$DISPLAY_SHR --volume=\"/etc/passwd:/etc/passwd:ro\""
-DISPLAY_SHR="$DISPLAY_SHR --volume=\"/etc/shadow:/etc/shadow:ro\""
-DISPLAY_SHR="$DISPLAY_SHR --volume=\"/etc/sudoers.d:/etc/sudoers.d:ro\""
-DISPLAY_SHR="$DISPLAY_SHR --volume=\"/tmp/.X11-unix:/tmp/.X11-unix:rw\""
+DOCKER_MOUNTS="-v $SELF_DIR/sim_cf_gazebo:$CATKIN_PATH/src/sim_cf_gazebo"
+DOCKER_MOUNTS="$DOCKER_MOUNTS -v $SELF_DIR/sim_cf_firmware:$CATKIN_PATH/src/sim_cf_firmware"
+DOCKER_MOUNTS="$DOCKER_MOUNTS -v $SELF_DIR/tools:$CATKIN_PATH/../tools"
+DOCKER_GUI="--privileged -e DISPLAY=${DISPLAY} -v /tmp/.X11-unix:/tmp/.X11-unix -v ${HOME}/.Xauthority:/home/${USER_NAME}/.Xauthority"
+DOCKER_GDB="--cap-add=SYS_PTRACE --security-opt seccomp=unconfined"
+DOCKER_PARAMS="--net=host --rm"
+echo "sharing volumes: $DOCKER_MOUNTS"
 
-echo "sharing volumes: $SHARE_VOL"
+echo
+read -p "Enable display sharing (y/n)?  " -n 1 -r
+echo
+
+
 
 if [[ $REPLY =~ ^[Yy]$ ]];then
-    echo "running vnc.."
-	tmux send-keys "docker run -i --env=\"DISPLAY=$DISPLAY\" $SHARE_VOL --env=\"QT_X11_NO_MITSHM=1\" -v /tmp/.X11-unix:/tmp/.X11-unix:rw --env=\"XAUTHORITY=$XAUTH\" --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v $XAUTH:$XAUTH --entrypoint \"/startup.sh\" $imgTag" C-m
+    echo "Enable display sharing"
+    tmux send-keys "docker run -i $DOCKER_PARAMS $DOCKER_GUI $DOCKER_MOUNTS $DOCKER_GDB --entrypoint \"/startup.sh\" $imgTag" C-m
 else
-	echo "not running vnc.. (in order to run execute /startup.sh inside the container)"
-	tmux send-keys "docker run -i $SHARE_VOL --entrypoint \"/startup.sh\" $imgTag" C-m
+	echo "Disable display sharing"
+	tmux send-keys "docker run -i $DOCKER_PARAMS $DOCKER_MOUNTS $DOCKER_GDB --entrypoint \"/startup.sh\" $imgTag" C-m
 fi
 echo
-
-
 
 tmux select-pane -t 1
 sleep 2
@@ -95,21 +93,14 @@ if [ $E == "N" ];then
 fi
 
 if test -f "tools/export_ips.sh"; then
-	echo "copying tools/export_ips.sh to container at /home/cf_user/tools/export_ips.sh"
-	docker cp tools/export_ips.sh $CNTNAME:/home/cf_user/tools/export_ips.sh
 	docker exec -i $CNTNAME sh -c "echo \"alias xip='source /home/cf_user/tools/export_ips.sh'\" >> /root/.bashrc"
-	echo "aliased as xip"
+	echo "aliased ./export_ips.sh as xip"
 fi
 
 if test -f "tools/fix_cr.sh"; then
-	echo "copying tools/fix_cr.sh to container at /home/cf_user/tools/fix_cr.sh"
-	docker cp tools/fix_cr.sh $CNTNAME:/home/cf_user/tools/fix_cr.sh
 	docker exec -i $CNTNAME sh -c "echo \"alias fixcr='/home/cf_user/tools/fix_cr.sh'\" >> /root/.bashrc"
-	echo "aliased as fixcr"
+	echo "aliased ./fix_cr.sh as fixcr"
 fi
-
-#docker exec -i $CNTNAME /bin/bash -c "cd $CATKIN_PATH;source devel/setup.bash;catkin build"
-#docker exec -i $CNTNAME /bin/bash -c "cd $CATKIN_PATH/src/sim_cf_firmware/sitl_make/;mkdir build;cd build;cmake ..;make"
 
 docker exec -i $CNTNAME /bin/bash -c "echo \"alias vsc='code --user-data-dir /home/cf_user/tmp'\" >> /root/.bashrc"
 
@@ -123,6 +114,9 @@ sleep 1
 
 tmux send-keys "docker exec -it $CNTNAME /bin/bash" C-m
 tmux send-keys "cd $CATKIN_PATH/src/sim_cf_firmware/sitl_make/;mkdir build;cd build;cmake ..;make" C-m
+sleep 2
+tmux send-keys "echo \"run visual studio code:\"" C-m
+tmux send-keys "vsc"
 
 
 # Set default window
