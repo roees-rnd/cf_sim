@@ -60,8 +60,6 @@ echo
 read -p "Enable display sharing (y/n)?  " -n 1 -r
 echo
 
-
-
 if [[ $REPLY =~ ^[Yy]$ ]];then
     echo "Enable display sharing"
     tmux send-keys "docker run -i $DOCKER_PARAMS $DOCKER_GUI $DOCKER_MOUNTS $DOCKER_GDB --entrypoint \"/startup.sh\" $imgTag" C-m
@@ -86,6 +84,9 @@ docker exec -i $CNTNAME sh -c "echo \"source $CATKIN_PATH/devel/setup.bash\" >> 
 #echo "hello docker" > test_file.txt
 #docker cp test_file.txt $CNTNAME:/home/cf_user/test_file_cpy.txt
 
+docker exec -i $CNTNAME sh -c "mkdir /home/cf_user/catkin_ws/src/.vscode"
+docker cp .vscode/c_cpp_properties.json $CNTNAME:/home/cf_user/catkin_ws/src/.vscode/c_cpp_properties.json
+docker cp .vscode/settings.json $CNTNAME:/home/cf_user/catkin_ws/src/.vscode/settings.json
 
 #test existance of tools dir (/home/cf_user/tools) and create it if neccessary:
 E=`docker exec $CNTNAME [ -d "/home/cf_user/tools" ] && echo "Y" || echo "N"`
