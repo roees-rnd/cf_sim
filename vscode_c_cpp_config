@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/cf_user/catkin_ws/devel/include/**",
+                "/opt/ros/kinetic/include/**",
+                "/home/cf_user/catkin_ws/src/crazyflie_ros/crazyflie_cpp/include/**",
+                "/home/cf_user/catkin_ws/src/sim_cf_gazebo/include/**",
+                "/usr/include/**",
+                "/home/cf_user/catkin_ws/build/crazyflie_gazebo/**"
+            ],
+            "defines":[
+                "SITL_CF2",
+                "APP_ENABLED"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
