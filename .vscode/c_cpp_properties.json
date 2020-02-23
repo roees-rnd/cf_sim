@@ -9,7 +9,11 @@
                 "/home/cf_user/catkin_ws/devel/include/**",
                 "/opt/ros/kinetic/include/**",
                 "/usr/include/**",
+                "/home/cf_user/catkin_ws./build/crazyflie_gazebo/**",
+                "/home/cf_user/catkin_ws/src/sim_cf_firmware/cf_app_layer/autonomous/**",
+                "/home/cf_user/catkin_ws/src/sim_cf_firmware/src/modules/interface/**",
                 "/home/cf_user/catkin_ws./build/crazyflie_gazebo/**"
+
             ],
             "defines":[
                 "SITL_CF2",
