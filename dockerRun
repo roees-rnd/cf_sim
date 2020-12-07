@@ -1,8 +1,11 @@
 #!/bin/bash
+
 SESSION=$USER
 tmux -2 new-session -d -s $SESSION
 tmux split-window -h
 tmux select-pane -t 0
+
+xhost + local:
 
 XAUTH=/tmp/.docker.xauth
 
@@ -46,11 +49,14 @@ then
 fi
 
 NUM_CNTR=`docker ps -a | wc -l`
+MYIP=`hostname -I | cut -d' ' -f1`
 
 DOCKER_MOUNTS="-v $SELF_DIR/sim_cf_gazebo:$CATKIN_PATH/src/sim_cf_gazebo"
 DOCKER_MOUNTS="$DOCKER_MOUNTS -v $SELF_DIR/sim_cf_firmware:$CATKIN_PATH/src/sim_cf_firmware"
 DOCKER_MOUNTS="$DOCKER_MOUNTS -v $SELF_DIR/tools:$CATKIN_PATH/../tools"
-DOCKER_GUI="--privileged -e DISPLAY=${DISPLAY} -v /tmp/.X11-unix:/tmp/.X11-unix -v ${HOME}/.Xauthority:/home/${USER_NAME}/.Xauthority"
+# DOCKER_GUI="--privileged -e DISPLAY=host.docker.internal:0 -v /tmp/.X11-unix:/tmp/.X11-unix:ro"
+DOCKER_GUI"--privileged -e DISPLAY=${MYIP}:0"
+# DOCKER_GUI="--privileged -e DISPLAY=${DISPLAY} -v /tmp/.X11-unix:/tmp/.X11-unix -v ${HOME}/.Xauthority:/home/${USER_NAME}/.Xauthority"
 DOCKER_GDB="--cap-add=SYS_PTRACE --security-opt seccomp=unconfined"
 #DOCKER_PARAMS="--net=host --rm"
 DOCKER_PARAMS="--rm"
