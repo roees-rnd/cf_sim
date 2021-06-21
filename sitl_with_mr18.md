@@ -224,3 +224,46 @@ Once inside GDB use the following commands:
 
    
 
+## Changes to firmware
+
+### sensors_sim.h\c instead:
+
+The above fies are used for implementing alternateve implementation `"SENSOR_INCLUDED_SIM"`
+This implementation includes the simulation implementation of the sensors:
+```c
+static const sensorsImplementation_t sensorImplementations[SensorImplementation_COUNT]= {
+   {
+    .implements = SensorImplementation_sim,
+    .init = sensorsSimInit,
+    .test = sensorsSimTest,
+    .areCalibrated = sensorsSimAreCalibrated,
+    .manufacturingTest = sensorsSimManufacturingTest,
+    .acquire = sensorsSimAcquire,
+    .waitDataReady = sensorsSimWaitDataReady,
+    .readGyro = sensorsSimReadGyro,
+    .readAcc = sensorsSimReadAcc,
+    .readMag = sensorsSimReadMag,
+    .readBaro = sensorsSimReadBaro,
+    .readMr18 = sensorsSimReadMr18,
+    .setAccMode = sensorsSimSetAccMode,
+    .dataAvailableCallback = nullFunction,
+   },
+}
+```
+for example, the implementation of read gyro:
+```c
+bool sensorsSimReadGyro(Axis3f *gyro)
+{
+  return (pdTRUE == xQueueReceive(gyroDataQueue, gyro, 0));
+}
+```
+
+More changes made to the firmware can easily be found when searching for the `SITL_CF2` macro used throughout the code. 
+e.g :
+```c
+#ifndef SITL_CF2
+  #include "nrf24l01.h"
+  #include "trace.h"
+#endif
+```
+
